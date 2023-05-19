@@ -32,4 +32,12 @@ app.post('/conta', (req, res) => {
   return res.status(201).send();
 });
 
+app.get('/extrato/:cpf', (req, res) => {
+  const { cpf } = req.params;
+
+  const cliente = clientes.find((cliente) => cliente.cpf === cpf);
+
+  return res.json(cliente.extrato);
+});
+
 app.listen(3333);
