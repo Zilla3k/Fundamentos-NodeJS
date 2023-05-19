@@ -37,6 +37,10 @@ app.get('/extrato/:cpf', (req, res) => {
 
   const cliente = clientes.find((cliente) => cliente.cpf === cpf);
 
+  if (!cliente) {
+    return res.status(400).json({ error: 'Cliente nāo encontrado!' });
+  }
+
   return res.json(cliente.extrato);
 });
 
