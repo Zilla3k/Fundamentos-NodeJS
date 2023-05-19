@@ -15,12 +15,17 @@ const clientes = [];
  */
 app.post('/conta', (req, res) => {
   const { cpf, nome } = req.body;
-  const id = uuidV4();
+
+  const clienteJaExiste = clientes.some((cliente) => cliente.cpf === cpf);
+
+  if (clienteJaExiste) {
+    return res.status(400).json({ error: 'Cliente ja existe!' });
+  }
 
   clientes.push({
     cpf,
     nome,
-    id,
+    id: uuidV4(),
     extrato: [],
   });
 
