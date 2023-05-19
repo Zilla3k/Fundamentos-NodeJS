@@ -7,6 +7,21 @@ app.use(express.json());
 
 const clientes = [];
 
+// Middleware para otimizaçāo de busca do cpf
+function verificarSeExisteContaCpf(req, res, next) {
+  const { cpf } = req.headers;
+
+  const cliente = clientes.find((cliente) => cliente.cpf === cpf);
+
+  if (!cliente) {
+    return res.status(400).json({ error: 'Cliente nāo encontrado!' });
+  }
+
+  req.cliente = cliente;
+
+  return next();
+}
+
 /**
  * CPF - string
  * Nome - string
@@ -32,15 +47,11 @@ app.post('/conta', (req, res) => {
   return res.status(201).send();
 });
 
-app.get('/extrato/:cpf', (req, res) => {
-  const { cpf } = req.params;
+// app.use(verificarSeExisteContaCpf) // Todas as funçōes abaixo desta linha recebem o middleware como parâmetro
 
-  const cliente = clientes.find((cliente) => cliente.cpf === cpf);
-
-  if (!cliente) {
-    return res.status(400).json({ error: 'Cliente nāo encontrado!' });
-  }
-
+// Middleware é usado apenas nesta linha como parâmetro
+app.get('/extrato', verificarSeExisteContaCpf, (req, res) => {
+  const { cliente } = req;
   return res.json(cliente.extrato);
 });
 
