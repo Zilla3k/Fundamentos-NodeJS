@@ -101,4 +101,18 @@ app.post('/saque', verificarSeExisteContaCpf, (req, res) => {
   return res.status(201).send();
 });
 
+app.get('/extrato/data', verificarSeExisteContaCpf, (req, res) => {
+  const { cliente } = req;
+  const { data } = req.query;
+
+  const dataFormatada = new Date(data + ' 00:00');
+
+  const extrato = cliente.extrato.filter(
+    (extrato) =>
+      extrato.data.toDateString() === new Date(dataFormatada).toDateString(),
+  );
+
+  return res.json(extrato);
+});
+
 app.listen(3333);
