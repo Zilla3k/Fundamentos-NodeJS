@@ -22,6 +22,17 @@ function verificarSeExisteContaCpf(req, res, next) {
   return next();
 }
 
+function pegarQuantia(extrato) {
+  const quantia = extrato.reduce((acc, operacao) => {
+    if (operacao.tipo === 'credito') {
+      return acc + operacao.valor;
+    } else {
+      return acc - operacao.valor;
+    }
+  }, 0);
+  return quantia;
+}
+
 /**
  * CPF - string
  * Nome - string
@@ -57,18 +68,36 @@ app.get('/extrato', verificarSeExisteContaCpf, (req, res) => {
 
 app.post('/deposito', verificarSeExisteContaCpf, (req, res) => {
   const { descricao, valor } = req.body;
-
   const { cliente } = req;
 
   const operacaoExtrato = {
     descricao,
     valor,
     data: new Date(),
-    type: 'credit',
+    tipo: 'credito',
   };
 
   cliente.extrato.push(operacaoExtrato);
+  return res.status(201).send();
+});
 
+app.post('/saque', verificarSeExisteContaCpf, (req, res) => {
+  const { valor } = req.body;
+  const { cliente } = req;
+
+  const quantia = pegarQuantia(cliente.extrato);
+
+  if (quantia < valor) {
+    return res.status(400).json({ error: 'Saldo insuficiente!' });
+  }
+
+  const operacaoExtrato = {
+    valor,
+    data: new Date(),
+    tipo: 'debito',
+  };
+
+  cliente.extrato.push(operacaoExtrato);
   return res.status(201).send();
 });
 
