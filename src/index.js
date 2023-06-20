@@ -55,4 +55,21 @@ app.get('/extrato', verificarSeExisteContaCpf, (req, res) => {
   return res.json(cliente.extrato);
 });
 
+app.post('/deposito', verificarSeExisteContaCpf, (req, res) => {
+  const { descricao, valor } = req.body;
+
+  const { cliente } = req;
+
+  const operacaoExtrato = {
+    descricao,
+    valor,
+    data: new Date(),
+    type: 'credit',
+  };
+
+  cliente.extrato.push(operacaoExtrato);
+
+  return res.status(201).send();
+});
+
 app.listen(3333);
