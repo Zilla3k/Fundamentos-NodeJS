@@ -115,4 +115,18 @@ app.get('/extrato/data', verificarSeExisteContaCpf, (req, res) => {
   return res.json(extrato);
 });
 
+app.put('/conta', verificarSeExisteContaCpf, (req, res) => {
+  const { nome } = req.body;
+  const { cliente } = req;
+
+  cliente.nome = nome;
+
+  return res.status(201).send();
+});
+
+app.get('/conta', verificarSeExisteContaCpf, (req, res) => {
+  const { cliente } = req;
+  return res.json(cliente);
+});
+
 app.listen(3333);
