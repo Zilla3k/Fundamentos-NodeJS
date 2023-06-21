@@ -129,4 +129,12 @@ app.get('/conta', verificarSeExisteContaCpf, (req, res) => {
   return res.json(cliente);
 });
 
+app.delete('/conta', verificarSeExisteContaCpf, (req, res) => {
+  const { cliente } = req;
+
+  clientes.splice(cliente, 1);
+
+  return res.status(200).json(clientes);
+});
+
 app.listen(3333);
