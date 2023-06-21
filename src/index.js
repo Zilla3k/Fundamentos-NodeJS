@@ -137,4 +137,10 @@ app.delete('/conta', verificarSeExisteContaCpf, (req, res) => {
   return res.status(200).json(clientes);
 });
 
+app.get('/saldo', verificarSeExisteContaCpf, (req, res) => {
+  const { cliente } = req;
+  const quantia = pegarQuantia(cliente.extrato);
+  return res.json(quantia);
+});
+
 app.listen(3333);
